@@ -50,13 +50,6 @@ print "Retrieval file: $ret\n";
 print "\tIndex for retrieval key: $retKey\n";
 print "Output file: $out\n";
 
-#GET DATA OUT OF MAIN FILE AND STORE IT INTO A HASH
-
-
-
-sub mean {
-	return sum(@_)/@_;
-}
 
 sub cleaner{
 	my $line=$_[0];
@@ -68,6 +61,9 @@ sub cleaner{
 my %mainHash;
 my %retHash;
 my %outHash;
+
+#GET DATA OUT OF MAIN FILE AND STORE IT INTO A HASH
+
 
 ####Store main file in hash	
 open (MAIN, '<', $main) or die "Could not open '$main' file \n";
@@ -81,7 +77,7 @@ print "key column for main file: ", $mainheader[$mainKey],"\n";
 
 while (my $entry = <MAIN>) {
 	$entry=cleaner($entry);
-	my @fields=split(',',$entry);
+	my @fields=split(",",$entry);
 	unless(defined($fields[$mainKey])){
     	next;
 		}
@@ -102,13 +98,13 @@ print "key column for ret file: ", $retheader[$retKey],"\n";
 
 while (my $entry = <RET>) {
 	$entry=cleaner($entry);
-	my @retfields=split(',',$entry);
+	my @retfields=split(",",$entry);
 	my $key=$retfields[$retKey];
 	if ( ! defined($key)){
     	next;
 		}
 	my @retcols=@retfields[@cols];
-	$retHash{$retfields[$retKey]}=\@retcols;    
+	$retHash{$key}=\@retcols;    
 }
 
 close RET;
@@ -124,11 +120,19 @@ foreach my $mk (keys %mainHash){
 	my @maincols=@{$mainHash{$mk}};
 	if (exists $retHash{$mk}){
 		my @retcols=@{$retHash{$mk}};
-		push (@maincols,@retcols);
+		foreach (@retcols){
+			if ($_){
+				push (@maincols,$_);
+			}
+			else{
+				push (@maincols,"");
+				}
+		}
 		}
 	else{
-		my @missing=("NA","NA");
-		push (@maincols,@missing);
+		for (my $i=0;$i<scalar @cols;$i++){
+			push (@maincols,"");
+			}
 		$missCount++;
 		}
 	$outHash{$mk}=\@maincols;
@@ -136,10 +140,12 @@ foreach my $mk (keys %mainHash){
 
 open (OUT,">",$out);
 print OUT join(",",@mainheader),"\n";
-foreach my $k (keys %outHash){
-	my @vals=@{$outHash{$k}};
-	print OUT join(",",@vals);
-	print OUT "\n";
+foreach my $v (values %outHash){
+	my @vals=@{$v};
+	my $string=join(",",@vals);
+	print OUT $string,"\n";
 }
 close OUT;
+
+print "Missing: $missCount\n";
 
