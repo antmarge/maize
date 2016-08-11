@@ -16,19 +16,24 @@ use Bio::SeqIO;
 our($opt_i,$opt_o,$opt_r);
 getopts('i:o:r:');
 my $in = $opt_i;
-my $out = $opt_o || "output.csv";
+my $out = $opt_o;
 my $ref=$opt_r || "B73";
 
-my $outdir="output/";
+if (!$out){
+	my @temp=split(/\./,$in);
+	print $in;
+	foreach(@temp){
+		print $_,"\n";
+		}
+	my $name=$temp[0];
+	$out="${name}_align.fa";
+	}
 
 #Open INPUT (a fasta file. First seq ">" is reference)
-
-my $seqio = Bio::SeqIO->new(-file => $in, '-format' => 'Fasta');
 
 my %hash;
 
 open(FASTA, $in);
-
 
 my $currentHead=<FASTA>;
 chomp($currentHead);
@@ -51,8 +56,13 @@ while(<FASTA>) {
     }
 
 close FASTA;
-my $change=".";
+
+
+#################################################
 print "Looking for sequences to edit\n";
+
+open OUT,">",$out;
+
 
 foreach my $head (keys %hash){
 	print $head,"\n";
@@ -66,7 +76,6 @@ foreach my $head (keys %hash){
 		###########Now check each nucleotide
 		
 		for (my $i=0;$i<scalar @seq;$i++){
-		print $seq[$i];
 			#There is a deleted seq and we need to put "-"
 			if ($seq[$i] eq "{"){
 				$i++; #skip the opening curly bracket
@@ -81,12 +90,17 @@ foreach my $head (keys %hash){
 				}
 				#$i++; #skip curly closing bracket
 			}
-
 			#There is a SNP and we need to keep the nucleotide letters
 			elsif ($seq[$i] eq "["){
 				$i++; #skip opening square bracket
 				while($seq[$i] ne "]"){
-					push (@newseq,$seq[$i]);
+					if ($seq[$i] eq ("/"||"-")){
+						$i++;
+					}
+					else{
+						push (@newseq,$seq[$i]);
+						$i++;
+						}
 				}
 				#$i++; #skip closing square bracket
 				}
@@ -95,38 +109,48 @@ foreach my $head (keys %hash){
 			}	
 		}
 	my $stringSeq=join('',@newseq);
+	$stringSeq =~ s/(.{1,80})/$1\n/gs;
 	$hash{$head}=$stringSeq;
-	print Dumper(\%hash);
-	die;		
 	}
+	
+	else{
+		my $refSeq=$hash{$head};
+		$refSeq=~ s/(.{1,80})/$1\n/gs;
+		
+		print OUT $head,"\n";
+		print OUT $refSeq,"\n";
+		#$hash{$head}=$refSeq;
+		}
 
 }
 
-print Dumper(\%hash);
+#print Dumper(\%hash);
 	
+open OUT,">",$out;
 
-
-die;
-
-
-while (my $line=<IN>){
-	$line=chomp($line);
-	#Check if it is a header line beginning with >
-	if (index($line, ">") != -1){
-		#When new header, store last one in hash
-		$hash{$currentHead}={$currentSeq};
-		#Reassign
-		$currentHead=$line;
-		$currentSeq="";
-		}
-	else{
-		#Read sequence into string $currentSeq
-		$currentSeq=$currentSeq.$line;
-		}	
+foreach my $k(keys %hash){
+	print OUT $k,"\n";
+	print OUT $hash{$k},"\n";
 	}
-close IN;
-	
-print Dumper(\%hash);
-	
+close OUT;
 
+
+
+#while (my $line=<IN>){
+#	$line=chomp($line);
+#	#Check if it is a header line beginning with >
+	#if (index($line, ">") != -1){
+#		#When new header, store last one in hash
+#		$hash{$currentHead}={$currentSeq};
+#		#Reassign
+#		$currentHead=$line;
+#		$currentSeq="";
+#		}
+#	else{
+#		#Read sequence into string $currentSeq
+#		$currentSeq=$currentSeq.$line;
+#		}	
+#	}
+#close IN;
 	
+#print Dumper(\%hash);
