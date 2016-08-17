@@ -6,6 +6,8 @@ getOutliers<-function(obs){
   colnames(obs)<-c("year","plot","tasselNm","tasselWt","tasselBr","bn2","secBN","L1","L2","BLtop","BLmid","BLlow","range","row","item","accession","notes")
   editedCSV="edited_raw1.csv"
 
+  #traits<-c("secBN")
+  
   traits<-c("tasselWt","tasselBr","bn2","secBN","L1","L2","BLtop","BLmid","BLlow")
   
   # calculate threshold
@@ -58,11 +60,11 @@ getOutliers<-function(obs){
 
   #Do boxplot
   total<-obs[,4:12]
-  labs<-c("weight","nPB","nPBwXB","nSB","len1","len2(MR)","BLtop","BLmid","BLlow")
+  labs<-c("weight","nPB","nPBwSB","nSB","len1","len2(MR)","BLtop","BLmid","BLlow")
   boxplot(total,use.columns=TRUE,col="grey",outcol="darkred",las=2,names=labs,main="After outlier removal based on residuals")
 
 
-  write.csv(obs,"outlierRem_raw2.csv")
+  write.csv(obs,"amesWL1213_or2x_160812.csv")
   print ("Check output files for outliers and filtered.")
 
   return(obs)
