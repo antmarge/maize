@@ -109,13 +109,13 @@ foreach my $head (keys %hash){
 			}	
 		}
 	my $stringSeq=join('',@newseq);
-	$stringSeq =~ s/(.{1,80})/$1\n/gs;
+	$stringSeq =~ s/(.{1,60})/$1\n/gs;
 	$hash{$head}=$stringSeq;
 	}
 	
 	else{
 		my $refSeq=$hash{$head};
-		$refSeq=~ s/(.{1,80})/$1\n/gs;
+		$refSeq=~ s/(.{1,60})/$1\n/gs;
 		
 		print OUT $head,"\n";
 		print OUT $refSeq,"\n";
@@ -128,7 +128,7 @@ foreach my $head (keys %hash){
 	
 open OUT,">",$out;
 
-foreach my $k(keys %hash){
+foreach my $k(sort keys %hash){
 	print OUT $k,"\n";
 	print OUT $hash{$k},"\n";
 	}
