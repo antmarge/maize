@@ -1,4 +1,6 @@
 
+#Based on code presented in https://fabiomarroni.wordpress.com/2011/08/09/estimate-decay-of-linkage-disequilibrium-with-distance/
+
 chromLD<-function(chr){
   
   #subset table to only include one chromosome
@@ -6,7 +8,7 @@ chromLD<-function(chr){
   distance<-c$distance
   LD.data<-c$R2
   
-  n<-10 #sample size
+  n<-10 #sample size (# of sampled chromosomes -- not number of chr)
   LD.st<-c(b0=12.9)
   distance.mb<-distance/1000000
   LD.nonlinear<-nls(LD.data~(1-distance.mb)^b0,start=LD.st,control=nls.control(minFactor=1/1000000000,maxiter=100,warnOnly=T))
