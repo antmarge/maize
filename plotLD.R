@@ -1,3 +1,4 @@
+#https://fabiomarroni.wordpress.com/2011/08/09/estimate-decay-of-linkage-disequilibrium-with-distance/
 
 chromLD<-function(chr){
   
@@ -22,7 +23,8 @@ chromLD<-function(chr){
   #In that case you just set: maxld<-max(fpoints)
   h.decay<-maxld/2
   half.decay.distance<-df$distance[which.min(abs(df$fpoints-h.decay))]
-  dec=paste0("Half decay distance for chromosome #",chr,": ",half.decay.distance)
+  number=length(LD.data)
+  dec=paste0("Half decay distance for chromosome #",chr,": ",half.decay.distance," #SNPs: ",number)
   print(dec)
   
   #PLOT
@@ -30,7 +32,7 @@ chromLD<-function(chr){
   ld.df<-ld.df[order(ld.df$distance),]
   maintitle=paste0("Linkage disequilibrium decay for chromosome ",chr,"\nHalf decay point at ",half.decay.distance, 
                     " bp distance\n16.08.16")
-  plot(distance,LD.data,pch=19,cex=0.9,ylab="Linkage disequilibrium (R^2)",xlab="Distance between SNPs (bp)",main=maintitle,col="darkgreen",cex.lab=.8,cex.main=.7)
+  plot(distance,LD.data,pch=19,cex=0.9,xlim=c(0,10000),ylab="Linkage disequilibrium (R^2)",xlab="Distance between SNPs (bp)",main=maintitle,col="darkgreen",cex.lab=.8,cex.main=.7)
   lines(ld.df$distance,ld.df$fpoints,lty=3,lwd=1.2)
   abline(v=half.decay.distance,col="red")
   
@@ -42,9 +44,11 @@ allLD<-function(maxchr){
   distance<-ldtable$distance
   LD.data<-ldtable$R2
   maintitle=paste0("Linkage disequilibrium decay\n16.08.16")
-  plot(distance,LD.data,pch=20,cex=0.9,xlim=c(0,500),ylab="Linkage disequilibrium (R^2)",xlab="Distance between SNPs (bp)",main=maintitle,col="darkgray",cex.lab=.8,cex.main=.7)
+  plot(distance,LD.data,pch=20,xlim=c(0,5000),cex=0.9,ylab="Linkage disequilibrium (R^2)",xlab="Distance between SNPs (bp)",main=maintitle,col="darkgray",cex.lab=.8,cex.main=.7)
+  legend(4000,.5,1:10,fill=colormatrix,title="CHR",cex=.7,box.col="white") # gives the legend lines the correct color and width
   
-  for (chr in 1:maxchr){
+  #sub=c(1,2,5,6,7,8,9,10)
+  for (chr in 1:10){
     
     #subset table to only include one chromosome
     colnow=colormatrix[chr]
@@ -68,15 +72,16 @@ allLD<-function(maxchr){
     #In that case you just set: maxld<-max(fpoints)
     h.decay<-maxld/2
     half.decay.distance<-df$distance[which.min(abs(df$fpoints-h.decay))]
-    dec=paste0("Half decay distance for chromosome #",chr,": ",half.decay.distance,"    ",colnow)
+    number=length(LD.data)
+    dec=paste0("Half decay distance for chromosome #",chr,": ",half.decay.distance," #SNPs: ",number)
+    #dec=paste0("Half decay distance for chromosome #",chr,": ",half.decay.distance,"    ",colnow)
     print(dec)
     
     #PLOT
     ld.df<-data.frame(distance,fpoints)
     ld.df<-ld.df[order(ld.df$distance),]
-    lines(ld.df$distance,ld.df$fpoints,lty=1,lwd=1.2,col=colnow)
-    #abline(v=half.decay.distance,col="red")
-    legend(60,.7,1:10,fill=colormatrix,title="CHR",cex=.7,box.col="white") # gives the legend lines the correct color and width
+    lines(ld.df$distance,ld.df$fpoints,lty=3,lwd=1.2,col=colnow)
+    abline(v=half.decay.distance,col=colnow,lty=1)
 
   }
 }
