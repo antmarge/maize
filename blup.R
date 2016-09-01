@@ -1,14 +1,16 @@
 library(lme4)
 
-traitBlups<-function(){
+traitBlups<-function(data){
     
-    traits<-colnames(orig[,4:12])
+    traits<-colnames(data[,4:12])
     for (t in traits){
       print("********************************")
       print(t)
-      getBlups(orig,t)
+      getBlups(data,t)
     }
 }
+
+#SOURCE http://articles.extension.org/pages/61006/estimating-heritability-and-blups-for-traits-using-tomato-phenotypic-data
 
 getBlups<-function(d,trait){
 
@@ -38,7 +40,7 @@ getBlups<-function(d,trait){
       capture.output(s,file=paste0(trait,"_model.txt"))
     
     #Estimate BLUPS
-      allblup<- ranef(mod2,na.action=na.omit)
+      allblup<- ranef(model,na.action=na.omit)
     
     #Look at output structure
       #str(traitblup)
@@ -53,7 +55,7 @@ getBlups<-function(d,trait){
     blupnum = traitblup[,1]
     
     #Save the traitblup output to a separate .csv file
-      col2<-paste0("intercept",".",trait)
+      col2<-paste0("BLUPs",".",trait)
       outblup<-cbind(rownames(traitblup),blupnum)
       colnames(outblup)<-c("genotype",col2)
       filename<-paste0(trait,"_BLUP.csv")
@@ -72,7 +74,7 @@ getBlups<-function(d,trait){
     traitxlab=paste0("Genotype BLUPs for ",trait)
     traitylab=paste0("Average ",trait," for genotype")
     traitmain=paste0("Average trait value vs BLUPs per genotype for ",trait)
-    #plot(blupnum, genoAgg$x, col="darkblue",xlab=traitxlab,ylab=traitylab,main=traitmain)
+    plot(blupnum, genoAgg$x, col="darkblue",xlab=traitxlab,ylab=traitylab,main=traitmain)
     
 }
 
