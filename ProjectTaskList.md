@@ -1,4 +1,4 @@
-# Project To Do List
+# Maize Project Task List
 
 ### Signatures of Selection Project (Rafael V)
 
