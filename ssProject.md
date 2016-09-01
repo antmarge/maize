@@ -20,6 +20,6 @@ Update from meeting with Dr. Muir
 ### Inflorescence Tassel GWAS Project
 
 - [x] Get genotypes from Panzea and split by chr
-- [IP] Run CHR hapmap files through hapmap2Matrix.R and snpQC() to get format for NAM
+- [ ] Run CHR hapmap files through hapmap2Matrix.R and snpQC() to get format for NAM
 - [ ] Population structure analysis (with Travis' code)
 - [ ] Run GWAS in NAM with imputed genotype matrix and population structure and BLUPs
