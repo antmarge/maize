@@ -12,9 +12,10 @@ library(NAM)
 # Data-> Separate (split by chr). Remove chr0 (non-matching)
 # Export data as Hapmap WITHOUT ANNOTATIONS, NOT DIPLOID
 
-hapmap2Matrix<-function(chr,impute=FALSE){
-  
-      #OPTION: Use a loop to got through all files in directory 
+hapmap2Matrix<-function(chr){
+      
+      #FUTURE EDITS: separate snpQC and hapmap2
+      #OPTION1: Use a loop to got through all files in directory 
       #for (i in 1:chr){
       #Hardcoded to go through an entire directory where all filenames are identical
       #except for chromosome number
